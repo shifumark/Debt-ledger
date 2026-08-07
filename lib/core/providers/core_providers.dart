@@ -44,7 +44,11 @@ class AppDatabaseInstance extends _$AppDatabaseInstance {
     final keyManager = ref.watch(dbKeyManagerProvider);
     final passphrase = await keyManager.getOrCreatePassphrase();
     final db = AppDatabase(openEncryptedConnection(passphrase));
-    ref.onDispose(db.close);
+    // Guarded: the restore flow (see BackupController.confirmRestore) closes
+    // the database explicitly and deliberately before this provider is
+    // invalidated, so this framework-triggered close is sometimes a
+    // deliberate no-op on an already-closed connection — never let it throw.
+    ref.onDispose(() => db.close().catchError((_) {}));
     return db;
   }
 }

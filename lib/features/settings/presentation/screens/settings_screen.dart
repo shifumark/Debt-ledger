@@ -29,15 +29,16 @@ class SettingsScreen extends StatelessWidget {
               subtitle: 'Theme',
               onTap: () => context.push(AppRoutes.settingsAppearance),
             ),
-            const SettingsTile(
+            SettingsTile(
               icon: Icons.backup_outlined,
               title: 'Backup & restore',
-              subtitle: 'Coming soon',
+              subtitle: 'Local encrypted backup, restore, and auto-backup',
+              onTap: () => context.push(AppRoutes.settingsBackup),
             ),
             const SettingsTile(
               icon: Icons.ios_share_outlined,
               title: 'Export',
-              subtitle: 'Coming soon',
+              subtitle: 'Use Reports to export data as PDF, Excel, or CSV',
             ),
           ],
         ),

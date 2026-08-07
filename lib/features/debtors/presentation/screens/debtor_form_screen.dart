@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../../core/constants/db_constants.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/id_generator.dart';
 import '../../../../core/utils/validators.dart';
@@ -66,7 +67,7 @@ class _DebtorFormScreenState extends ConsumerState<DebtorFormScreen> {
     final docsDir = await getApplicationDocumentsDirectory();
     final destination = p.join(
       docsDir.path,
-      'debtor_photos',
+      DbConstants.debtorPhotosDirName,
       '${IdGenerator.generate()}${p.extension(picked.path)}',
     );
     await Directory(p.dirname(destination)).create(recursive: true);

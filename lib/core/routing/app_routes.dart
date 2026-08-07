@@ -16,6 +16,7 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String settingsSecurity = '/settings/security';
   static const String settingsAppearance = '/settings/appearance';
+  static const String settingsBackup = '/settings/backup';
   static const String addTransaction = '/transaction/add';
   static const String search = '/search';
 }

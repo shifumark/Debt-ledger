@@ -110,7 +110,7 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>.internal(
 // ignore: unused_element
 typedef SharedPreferencesRef = FutureProviderRef<SharedPreferences>;
 String _$appDatabaseInstanceHash() =>
-    r'080d0a3cdc0375ec15f5926cc671f2427f556abe';
+    r'0d8f65709c8094aabe018e29ededeb0c29043932';
 
 /// Singleton for the app's lifetime — reopening a SQLCipher connection is
 /// expensive and there is exactly one on-disk database.
