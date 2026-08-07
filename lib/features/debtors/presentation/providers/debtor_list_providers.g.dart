@@ -7,7 +7,7 @@ part of 'debtor_list_providers.dart';
 // **************************************************************************
 
 String _$debtorListWithBalancesHash() =>
-    r'c4edaf987079aba99d48a898ffa9f4dcfd069e75';
+    r'290062b8b3499e11cd2c04735e1d33f87d021494';
 
 /// See also [debtorListWithBalances].
 @ProviderFor(debtorListWithBalances)

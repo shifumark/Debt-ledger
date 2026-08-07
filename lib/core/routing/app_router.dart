@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,13 +6,18 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/debtors/presentation/screens/debtor_detail_screen.dart';
 import '../../features/debtors/presentation/screens/debtor_form_screen.dart';
 import '../../features/debtors/presentation/screens/debtor_list_screen.dart';
+import '../../features/reports/presentation/screens/annual_collections_report_screen.dart';
+import '../../features/reports/presentation/screens/collection_summary_report_screen.dart';
+import '../../features/reports/presentation/screens/monthly_collections_report_screen.dart';
+import '../../features/reports/presentation/screens/outstanding_debts_report_screen.dart';
+import '../../features/reports/presentation/screens/payment_history_report_screen.dart';
+import '../../features/reports/presentation/screens/reports_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/settings/presentation/screens/appearance_settings_screen.dart';
 import '../../features/settings/presentation/screens/security_settings_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/add_transaction_screen.dart';
 import '../../features/transactions/presentation/screens/transaction_history_screen.dart';
-import '../widgets/empty_state.dart';
 import 'app_routes.dart';
 import 'scaffold_with_nav.dart';
 
@@ -66,11 +70,29 @@ GoRouter appRouter(Ref ref) {
           StatefulShellBranch(routes: [
             GoRoute(
               path: AppRoutes.reports,
-              builder: (context, state) => const EmptyState(
-                icon: Icons.bar_chart_outlined,
-                title: 'Reports coming soon',
-                message: 'Outstanding debts, collections, and export tools will appear here.',
-              ),
+              builder: (context, state) => const ReportsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'outstanding',
+                  builder: (context, state) => const OutstandingDebtsReportScreen(),
+                ),
+                GoRoute(
+                  path: 'payments',
+                  builder: (context, state) => const PaymentHistoryReportScreen(),
+                ),
+                GoRoute(
+                  path: 'collection-summary',
+                  builder: (context, state) => const CollectionSummaryReportScreen(),
+                ),
+                GoRoute(
+                  path: 'monthly',
+                  builder: (context, state) => const MonthlyCollectionsReportScreen(),
+                ),
+                GoRoute(
+                  path: 'annual',
+                  builder: (context, state) => const AnnualCollectionsReportScreen(),
+                ),
+              ],
             ),
           ]),
           StatefulShellBranch(routes: [

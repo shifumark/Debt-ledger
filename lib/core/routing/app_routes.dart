@@ -8,6 +8,11 @@ class AppRoutes {
   static const String debtorDetail = '/debtors/detail';
   static const String transactions = '/transactions';
   static const String reports = '/reports';
+  static const String reportOutstandingDebts = '/reports/outstanding';
+  static const String reportPaymentHistory = '/reports/payments';
+  static const String reportCollectionSummary = '/reports/collection-summary';
+  static const String reportMonthlyCollections = '/reports/monthly';
+  static const String reportAnnualCollections = '/reports/annual';
   static const String settings = '/settings';
   static const String settingsSecurity = '/settings/security';
   static const String settingsAppearance = '/settings/appearance';

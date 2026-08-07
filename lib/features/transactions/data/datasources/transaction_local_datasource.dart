@@ -20,6 +20,10 @@ abstract class TransactionLocalDataSource {
   Stream<double> watchBalanceForDebtor(int debtorId);
   Future<double> calculateBalance(int debtorId);
   Future<DashboardTotals> calculateDashboardTotals();
+  Future<double> calculateTotalForgiven();
+  Future<List<int>> availableTransactionYears();
+  Future<List<MonthlyCollectionRow>> monthlyCollections({required int year});
+  Future<List<AnnualCollectionRow>> annualCollections();
 }
 
 class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
@@ -77,4 +81,17 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
   @override
   Future<DashboardTotals> calculateDashboardTotals() => _dao.calculateDashboardTotals();
+
+  @override
+  Future<double> calculateTotalForgiven() => _dao.calculateTotalForgiven();
+
+  @override
+  Future<List<int>> availableTransactionYears() => _dao.availableTransactionYears();
+
+  @override
+  Future<List<MonthlyCollectionRow>> monthlyCollections({required int year}) =>
+      _dao.monthlyCollections(year: year);
+
+  @override
+  Future<List<AnnualCollectionRow>> annualCollections() => _dao.annualCollections();
 }

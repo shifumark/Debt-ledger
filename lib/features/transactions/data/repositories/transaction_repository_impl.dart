@@ -97,12 +97,56 @@ class TransactionRepositoryImpl implements TransactionRepository {
     }
   }
 
+  @override
+  Future<Result<double>> calculateTotalForgiven() async {
+    try {
+      return resultSuccess(await _dataSource.calculateTotalForgiven());
+    } on Exception catch (e) {
+      return resultFailure(_mapException(e));
+    }
+  }
+
+  @override
+  Future<Result<List<int>>> getAvailableReportYears() async {
+    try {
+      return resultSuccess(await _dataSource.availableTransactionYears());
+    } on Exception catch (e) {
+      return resultFailure(_mapException(e));
+    }
+  }
+
+  @override
+  Future<Result<List<MonthlyCollection>>> getMonthlyCollections(int year) async {
+    try {
+      final rows = await _dataSource.monthlyCollections(year: year);
+      return resultSuccess(
+        rows.map((r) => MonthlyCollection(month: r.month, total: r.total)).toList(),
+      );
+    } on Exception catch (e) {
+      return resultFailure(_mapException(e));
+    }
+  }
+
+  @override
+  Future<Result<List<AnnualCollection>>> getAnnualCollections() async {
+    try {
+      final rows = await _dataSource.annualCollections();
+      return resultSuccess(
+        rows.map((r) => AnnualCollection(year: r.year, total: r.total)).toList(),
+      );
+    } on Exception catch (e) {
+      return resultFailure(_mapException(e));
+    }
+  }
+
   db.TransactionTypeFilter? _toDataFilter(TransactionQueryFilter? filter) {
     if (filter == null) return null;
     return db.TransactionTypeFilter(
       types: filter.types?.map(TransactionMapper.toColumnType).toSet(),
       debtorId: filter.debtorId,
       searchTerm: filter.searchTerm,
+      startDate: filter.startDate,
+      endDate: filter.endDate,
     );
   }
 

@@ -3,11 +3,19 @@ import '../../../../shared/enums/shared_enums.dart';
 import '../entities/debt_transaction.dart';
 
 class TransactionQueryFilter {
-  const TransactionQueryFilter({this.types, this.debtorId, this.searchTerm});
+  const TransactionQueryFilter({
+    this.types,
+    this.debtorId,
+    this.searchTerm,
+    this.startDate,
+    this.endDate,
+  });
 
   final Set<TransactionType>? types;
   final int? debtorId;
   final String? searchTerm;
+  final DateTime? startDate;
+  final DateTime? endDate;
 }
 
 class TransactionAggregates {
@@ -20,6 +28,21 @@ class TransactionAggregates {
   final double totalOutstanding;
   final double totalLent;
   final double totalReceived;
+}
+
+class MonthlyCollection {
+  const MonthlyCollection({required this.month, required this.total});
+
+  /// 1-12
+  final int month;
+  final double total;
+}
+
+class AnnualCollection {
+  const AnnualCollection({required this.year, required this.total});
+
+  final int year;
+  final double total;
 }
 
 abstract class TransactionRepository {
@@ -39,4 +62,8 @@ abstract class TransactionRepository {
   Stream<double> watchBalanceForDebtor(int debtorId);
   Future<Result<double>> calculateBalance(int debtorId);
   Future<Result<TransactionAggregates>> calculateAggregates();
+  Future<Result<double>> calculateTotalForgiven();
+  Future<Result<List<int>>> getAvailableReportYears();
+  Future<Result<List<MonthlyCollection>>> getMonthlyCollections(int year);
+  Future<Result<List<AnnualCollection>>> getAnnualCollections();
 }

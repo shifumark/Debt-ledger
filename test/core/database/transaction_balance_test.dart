@@ -48,13 +48,14 @@ void main() {
     TransactionTypeColumn type,
     double amount, {
     AdjustmentDirectionColumn? direction,
+    DateTime? date,
   }) async {
     await db.into(db.transactions).insert(TransactionsCompanion.insert(
           uuid: IdGenerator.generate(),
           debtorId: debtorId,
           type: type,
           amount: amount,
-          date: DateTime(2026, 1, 1),
+          date: date ?? DateTime(2026, 1, 1),
           adjustmentDirection: Value(direction),
         ));
   }
@@ -135,5 +136,63 @@ void main() {
     expect(totals.totalLent, 800);
     expect(totals.totalReceived, 100);
     expect(totals.totalOutstanding, 700);
+  });
+
+  test('calculateTotalForgiven sums only forgiveness transactions', () async {
+    final debtorId = await seedDebtor();
+    await insertTransaction(debtorId, TransactionTypeColumn.loan, 900);
+    await insertTransaction(debtorId, TransactionTypeColumn.forgiveness, 250);
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 100);
+
+    expect(await db.transactionDao.calculateTotalForgiven(), 250);
+  });
+
+  test('monthlyCollections groups payments by month within a year', () async {
+    final debtorId = await seedDebtor();
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 100,
+        date: DateTime(2026, 1, 15));
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 50,
+        date: DateTime(2026, 1, 20));
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 200,
+        date: DateTime(2026, 3, 5));
+    // Different year — must not be included.
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 999,
+        date: DateTime(2025, 1, 15));
+    // A loan in the same month — must not be included (only payments count).
+    await insertTransaction(debtorId, TransactionTypeColumn.loan, 500,
+        date: DateTime(2026, 1, 10));
+
+    final rows = await db.transactionDao.monthlyCollections(year: 2026);
+    final byMonth = {for (final r in rows) r.month: r.total};
+
+    expect(byMonth[1], 150);
+    expect(byMonth[3], 200);
+    expect(byMonth.containsKey(2), isFalse);
+  });
+
+  test('annualCollections groups payments by year', () async {
+    final debtorId = await seedDebtor();
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 100,
+        date: DateTime(2025, 6, 1));
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 300,
+        date: DateTime(2026, 2, 1));
+    await insertTransaction(debtorId, TransactionTypeColumn.payment, 50,
+        date: DateTime(2026, 7, 1));
+
+    final rows = await db.transactionDao.annualCollections();
+    final byYear = {for (final r in rows) r.year: r.total};
+
+    expect(byYear[2025], 100);
+    expect(byYear[2026], 350);
+  });
+
+  test('availableTransactionYears returns distinct years descending', () async {
+    final debtorId = await seedDebtor();
+    await insertTransaction(debtorId, TransactionTypeColumn.loan, 100, date: DateTime(2024, 5, 1));
+    await insertTransaction(debtorId, TransactionTypeColumn.loan, 100, date: DateTime(2026, 5, 1));
+    await insertTransaction(debtorId, TransactionTypeColumn.loan, 100, date: DateTime(2025, 5, 1));
+
+    final years = await db.transactionDao.availableTransactionYears();
+    expect(years, [2026, 2025, 2024]);
   });
 }
