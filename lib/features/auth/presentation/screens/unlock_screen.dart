@@ -92,7 +92,11 @@ class _UnlockScreenState extends ConsumerState<UnlockScreen> {
                     textAlign: TextAlign.center,
                   )
                 else
-                  Expanded(child: _usePassword ? _buildPasswordEntry() : _buildPinEntry(authState)),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: _usePassword ? _buildPasswordEntry() : _buildPinEntry(authState),
+                    ),
+                  ),
               ],
             ),
           ),

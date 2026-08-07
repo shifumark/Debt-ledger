@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
 
 # Windows sqlite3.dll used only to run `flutter test` locally (Drift needs a
 # native sqlite3 on PATH/cwd when tests run outside a full app embedder) —

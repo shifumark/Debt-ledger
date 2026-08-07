@@ -29,6 +29,13 @@ GoRouter appRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.dashboard,
     routes: [
+      // Only the 5 tab-root screens live inside the shell's branches — a
+      // route nested under a branch pushes onto that branch's own Navigator,
+      // which renders *inside* ScaffoldWithNav's body, leaving the bottom
+      // nav bar and FAB visible on top of it. Every full-screen destination
+      // below (detail/add/edit/settings sub-pages/report pages) is
+      // deliberately a top-level route instead, so it covers the shell
+      // entirely like a normal full-screen push.
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => ScaffoldWithNav(navigationShell: shell),
         branches: [
@@ -42,24 +49,6 @@ GoRouter appRouter(Ref ref) {
             GoRoute(
               path: AppRoutes.debtors,
               builder: (context, state) => const DebtorListScreen(),
-              routes: [
-                GoRoute(
-                  path: 'detail/:debtorId',
-                  builder: (context, state) => DebtorDetailScreen(
-                    debtorId: int.parse(state.pathParameters['debtorId']!),
-                  ),
-                ),
-                GoRoute(
-                  path: 'add',
-                  builder: (context, state) => const DebtorFormScreen(),
-                ),
-                GoRoute(
-                  path: 'edit/:debtorId',
-                  builder: (context, state) => DebtorFormScreen(
-                    debtorId: int.parse(state.pathParameters['debtorId']!),
-                  ),
-                ),
-              ],
             ),
           ]),
           StatefulShellBranch(routes: [
@@ -72,51 +61,63 @@ GoRouter appRouter(Ref ref) {
             GoRoute(
               path: AppRoutes.reports,
               builder: (context, state) => const ReportsScreen(),
-              routes: [
-                GoRoute(
-                  path: 'outstanding',
-                  builder: (context, state) => const OutstandingDebtsReportScreen(),
-                ),
-                GoRoute(
-                  path: 'payments',
-                  builder: (context, state) => const PaymentHistoryReportScreen(),
-                ),
-                GoRoute(
-                  path: 'collection-summary',
-                  builder: (context, state) => const CollectionSummaryReportScreen(),
-                ),
-                GoRoute(
-                  path: 'monthly',
-                  builder: (context, state) => const MonthlyCollectionsReportScreen(),
-                ),
-                GoRoute(
-                  path: 'annual',
-                  builder: (context, state) => const AnnualCollectionsReportScreen(),
-                ),
-              ],
             ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
               path: AppRoutes.settings,
               builder: (context, state) => const SettingsScreen(),
-              routes: [
-                GoRoute(
-                  path: 'security',
-                  builder: (context, state) => const SecuritySettingsScreen(),
-                ),
-                GoRoute(
-                  path: 'appearance',
-                  builder: (context, state) => const AppearanceSettingsScreen(),
-                ),
-                GoRoute(
-                  path: 'backup',
-                  builder: (context, state) => const BackupSettingsScreen(),
-                ),
-              ],
             ),
           ]),
         ],
+      ),
+      GoRoute(
+        path: '${AppRoutes.debtorDetail}/:debtorId',
+        builder: (context, state) => DebtorDetailScreen(
+          debtorId: int.parse(state.pathParameters['debtorId']!),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.debtorAdd,
+        builder: (context, state) => const DebtorFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.debtorEdit}/:debtorId',
+        builder: (context, state) => DebtorFormScreen(
+          debtorId: int.parse(state.pathParameters['debtorId']!),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.reportOutstandingDebts,
+        builder: (context, state) => const OutstandingDebtsReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reportPaymentHistory,
+        builder: (context, state) => const PaymentHistoryReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reportCollectionSummary,
+        builder: (context, state) => const CollectionSummaryReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reportMonthlyCollections,
+        builder: (context, state) => const MonthlyCollectionsReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reportAnnualCollections,
+        builder: (context, state) => const AnnualCollectionsReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsSecurity,
+        builder: (context, state) => const SecuritySettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsAppearance,
+        builder: (context, state) => const AppearanceSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsBackup,
+        builder: (context, state) => const BackupSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.addTransaction,

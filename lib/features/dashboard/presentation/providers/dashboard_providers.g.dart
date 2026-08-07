@@ -26,12 +26,12 @@ final getDashboardSummaryUseCaseProvider =
 // ignore: unused_element
 typedef GetDashboardSummaryUseCaseRef =
     AutoDisposeFutureProviderRef<GetDashboardSummary>;
-String _$dashboardSummaryHash() => r'220a50501d756044d7e33e2a46edd607c8ea961e';
+String _$dashboardSummaryHash() => r'15610ef241cd4bbd6e9d8421ee505691bcabaa6e';
 
 /// See also [dashboardSummary].
 @ProviderFor(dashboardSummary)
 final dashboardSummaryProvider =
-    AutoDisposeFutureProvider<DashboardSummary>.internal(
+    AutoDisposeStreamProvider<DashboardSummary>.internal(
       dashboardSummary,
       name: r'dashboardSummaryProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -43,6 +43,6 @@ final dashboardSummaryProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DashboardSummaryRef = AutoDisposeFutureProviderRef<DashboardSummary>;
+typedef DashboardSummaryRef = AutoDisposeStreamProviderRef<DashboardSummary>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

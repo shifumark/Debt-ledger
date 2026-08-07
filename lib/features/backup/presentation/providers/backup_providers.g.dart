@@ -83,7 +83,7 @@ final applyRestoreUseCaseProvider = AutoDisposeProvider<ApplyRestore>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ApplyRestoreUseCaseRef = AutoDisposeProviderRef<ApplyRestore>;
-String _$autoBackupCheckHash() => r'6a92090a2b2776d37e2ec1351dd4180f791a426b';
+String _$autoBackupCheckHash() => r'b97590c0b6c4732383dd367e4cfe37ae5fc80d5d';
 
 /// Fire-and-forget startup check: if automatic backup is enabled and due,
 /// silently writes an internal backup and prunes old ones. Triggered once by

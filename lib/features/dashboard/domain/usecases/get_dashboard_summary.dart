@@ -1,7 +1,9 @@
-import '../../../../core/error/result.dart';
-import '../../../debtors/domain/repositories/debtor_repository.dart';
-import '../../../transactions/domain/repositories/transaction_repository.dart';
+import '../../../../core/utils/combine_latest.dart';
 import '../../../../shared/enums/shared_enums.dart';
+import '../../../debtors/domain/entities/debtor.dart';
+import '../../../debtors/domain/repositories/debtor_repository.dart';
+import '../../../transactions/domain/entities/debt_transaction.dart';
+import '../../../transactions/domain/repositories/transaction_repository.dart';
 import '../entities/dashboard_summary.dart';
 
 class GetDashboardSummary {
@@ -10,20 +12,26 @@ class GetDashboardSummary {
   final DebtorRepository _debtorRepository;
   final TransactionRepository _transactionRepository;
 
-  Future<Result<DashboardSummary>> call() async {
-    final aggregatesResult = await _transactionRepository.calculateAggregates();
-    return aggregatesResult.fold(
-      (failure) => Future.value(resultFailure(failure)),
-      (aggregates) => _buildSummary(aggregates),
+  /// Reactive — re-emits whenever any underlying debtor or transaction data
+  /// changes. A one-shot Future here would go stale: the bottom-nav shell
+  /// keeps the dashboard mounted even when another tab is active, so nothing
+  /// would ever trigger a recompute after the first load.
+  Stream<DashboardSummary> watch() {
+    return combineLatest4(
+      _transactionRepository.watchAggregates(),
+      _debtorRepository.watchDebtors(filter: DebtorFilter.all, sortBy: DebtorSortBy.name),
+      _debtorRepository.watchBalancesByDebtor(),
+      _transactionRepository.watchAllTransactions(limit: 5, offset: 0),
+      _build,
     );
   }
 
-  Future<Result<DashboardSummary>> _buildSummary(TransactionAggregates aggregates) async {
-    final debtors = await _debtorRepository
-        .watchDebtors(filter: DebtorFilter.all, sortBy: DebtorSortBy.name)
-        .first;
-    final balances = await _debtorRepository.watchBalancesByDebtor().first;
-
+  DashboardSummary _build(
+    TransactionAggregates aggregates,
+    List<Debtor> debtors,
+    Map<int, double> balances,
+    List<DebtTransaction> recentTransactions,
+  ) {
     final activeDebtors = debtors.where((d) => !d.isArchived).toList();
     final fullyPaid = activeDebtors.where((d) => (balances[d.id] ?? 0) <= 0).length;
 
@@ -37,11 +45,7 @@ class GetDashboardSummary {
       }
     }
 
-    final recentResult = await _transactionRepository
-        .watchAllTransactions(limit: 5, offset: 0)
-        .first;
-
-    return resultSuccess(DashboardSummary(
+    return DashboardSummary(
       totalOutstanding: aggregates.totalOutstanding,
       totalLent: aggregates.totalLent,
       totalReceived: aggregates.totalReceived,
@@ -50,7 +54,7 @@ class GetDashboardSummary {
       fullyPaidDebtors: fullyPaid,
       largestOutstandingBalance: largestBalance,
       largestOutstandingDebtorName: largestDebtorName,
-      recentTransactions: recentResult,
-    ));
+      recentTransactions: recentTransactions,
+    );
   }
 }

@@ -128,7 +128,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.xxl),
-                Expanded(child: _buildStepBody()),
+                Expanded(child: SingleChildScrollView(child: _buildStepBody())),
               ],
             ),
           ),

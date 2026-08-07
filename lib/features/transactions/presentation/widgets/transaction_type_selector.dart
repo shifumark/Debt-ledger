@@ -14,16 +14,21 @@ class TransactionTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<TransactionType>(
-      segments: const [
-        ButtonSegment(value: TransactionType.loan, label: Text('Loan'), icon: Icon(Icons.north_east)),
-        ButtonSegment(value: TransactionType.payment, label: Text('Payment'), icon: Icon(Icons.south_west)),
-        ButtonSegment(value: TransactionType.adjustment, label: Text('Adjust'), icon: Icon(Icons.tune)),
-        ButtonSegment(value: TransactionType.forgiveness, label: Text('Forgive'), icon: Icon(Icons.volunteer_activism_outlined)),
-      ],
-      selected: {selected},
-      onSelectionChanged: (values) => onChanged(values.first),
-      showSelectedIcon: false,
+    // A single-row SegmentedButton with 4 icon+label segments doesn't fit on
+    // narrow screens (labels wrap letter-by-letter) — a wrapping chip row
+    // scales down to however many segments fit per line instead.
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: TransactionType.values.map((type) {
+        final isSelected = type == selected;
+        return ChoiceChip(
+          avatar: Icon(type.icon, size: 18),
+          label: Text(type.label),
+          selected: isSelected,
+          onSelected: (_) => onChanged(type),
+        );
+      }).toList(),
     );
   }
 }

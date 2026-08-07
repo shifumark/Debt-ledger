@@ -40,7 +40,7 @@ class DashboardScreen extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   mainAxisSpacing: AppSpacing.sm,
                   crossAxisSpacing: AppSpacing.sm,
-                  childAspectRatio: 1.4,
+                  childAspectRatio: 1.1,
                   children: [
                     SummaryCard(
                       label: 'Total outstanding',

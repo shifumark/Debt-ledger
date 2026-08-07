@@ -19,7 +19,6 @@ dependencies:
 
   # Local database
   drift: ^2.22.1
-  sqlite3_flutter_libs: ^0.5.28
   sqlcipher_flutter_libs: ^0.6.4
   sqlite3: ^2.7.4
   path_provider: ^2.1.5
@@ -75,6 +74,7 @@ dev_dependencies:
   freezed: ^2.5.7
   json_serializable: ^6.9.0
   drift_dev: ^2.22.1
+  path_provider_platform_interface: ^2.1.2
 
 flutter:
   uses-material-design: true

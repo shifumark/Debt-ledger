@@ -20,6 +20,7 @@ abstract class TransactionLocalDataSource {
   Stream<double> watchBalanceForDebtor(int debtorId);
   Future<double> calculateBalance(int debtorId);
   Future<DashboardTotals> calculateDashboardTotals();
+  Stream<DashboardTotals> watchDashboardTotals();
   Future<double> calculateTotalForgiven();
   Future<List<int>> availableTransactionYears();
   Future<List<MonthlyCollectionRow>> monthlyCollections({required int year});
@@ -81,6 +82,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
   @override
   Future<DashboardTotals> calculateDashboardTotals() => _dao.calculateDashboardTotals();
+
+  @override
+  Stream<DashboardTotals> watchDashboardTotals() => _dao.watchDashboardTotals();
 
   @override
   Future<double> calculateTotalForgiven() => _dao.calculateTotalForgiven();

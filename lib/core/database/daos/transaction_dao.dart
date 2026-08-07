@@ -116,20 +116,8 @@ class TransactionDao extends DatabaseAccessor<AppDatabase> with _$TransactionDao
   /// count breakdowns, for the dashboard summary.
   Future<DashboardTotals> calculateDashboardTotals() async {
     final balanceExpr = _balanceCaseExpression().sum();
-    final loanExpr = CaseWhenExpression<double>(
-      cases: [
-        CaseWhen(transactions.type.equalsValue(TransactionTypeColumn.loan),
-            then: transactions.amount),
-      ],
-      orElse: const Constant(0),
-    ).sum();
-    final paymentExpr = CaseWhenExpression<double>(
-      cases: [
-        CaseWhen(transactions.type.equalsValue(TransactionTypeColumn.payment),
-            then: transactions.amount),
-      ],
-      orElse: const Constant(0),
-    ).sum();
+    final loanExpr = _typeAmountCaseExpression(TransactionTypeColumn.loan).sum();
+    final paymentExpr = _typeAmountCaseExpression(TransactionTypeColumn.payment).sum();
 
     final query = selectOnly(transactions)
       ..join([
@@ -143,6 +131,37 @@ class TransactionDao extends DatabaseAccessor<AppDatabase> with _$TransactionDao
       totalOutstanding: row.read(balanceExpr) ?? 0,
       totalLent: row.read(loanExpr) ?? 0,
       totalReceived: row.read(paymentExpr) ?? 0,
+    );
+  }
+
+  /// Reactive version of [calculateDashboardTotals] — re-emits whenever any
+  /// transaction or debtor changes, so the dashboard stays live instead of
+  /// showing a snapshot from whenever it first loaded.
+  Stream<DashboardTotals> watchDashboardTotals() {
+    final balanceExpr = _balanceCaseExpression().sum();
+    final loanExpr = _typeAmountCaseExpression(TransactionTypeColumn.loan).sum();
+    final paymentExpr = _typeAmountCaseExpression(TransactionTypeColumn.payment).sum();
+
+    final query = selectOnly(transactions)
+      ..join([
+        innerJoin(debtors, debtors.id.equalsExp(transactions.debtorId)),
+      ])
+      ..addColumns([balanceExpr, loanExpr, paymentExpr])
+      ..where(debtors.isArchived.equals(false));
+
+    return query.watchSingle().map((row) => DashboardTotals(
+          totalOutstanding: row.read(balanceExpr) ?? 0,
+          totalLent: row.read(loanExpr) ?? 0,
+          totalReceived: row.read(paymentExpr) ?? 0,
+        ));
+  }
+
+  Expression<double> _typeAmountCaseExpression(TransactionTypeColumn type) {
+    return CaseWhenExpression<double>(
+      cases: [
+        CaseWhen(transactions.type.equalsValue(type), then: transactions.amount),
+      ],
+      orElse: const Constant(0),
     );
   }
 

@@ -21,12 +21,13 @@ class SummaryCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: colorScheme.primary),
-            const SizedBox(height: AppSpacing.sm),
+            Icon(icon, color: colorScheme.primary, size: 22),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               value,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(

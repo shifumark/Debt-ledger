@@ -84,6 +84,15 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @override
+  Stream<TransactionAggregates> watchAggregates() {
+    return _dataSource.watchDashboardTotals().map((totals) => TransactionAggregates(
+          totalOutstanding: totals.totalOutstanding,
+          totalLent: totals.totalLent,
+          totalReceived: totals.totalReceived,
+        ));
+  }
+
+  @override
   Future<Result<TransactionAggregates>> calculateAggregates() async {
     try {
       final totals = await _dataSource.calculateDashboardTotals();

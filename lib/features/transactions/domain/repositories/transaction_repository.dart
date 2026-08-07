@@ -62,6 +62,7 @@ abstract class TransactionRepository {
   Stream<double> watchBalanceForDebtor(int debtorId);
   Future<Result<double>> calculateBalance(int debtorId);
   Future<Result<TransactionAggregates>> calculateAggregates();
+  Stream<TransactionAggregates> watchAggregates();
   Future<Result<double>> calculateTotalForgiven();
   Future<Result<List<int>>> getAvailableReportYears();
   Future<Result<List<MonthlyCollection>>> getMonthlyCollections(int year);
